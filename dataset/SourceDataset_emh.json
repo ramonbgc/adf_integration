@@ -1,0 +1,19 @@
+{
+	"name": "SourceDataset_emh",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "raw",
+				"fileSystem": "source"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

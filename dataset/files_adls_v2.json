@@ -1,0 +1,19 @@
+{
+	"name": "files_adls_v2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapsedata_adls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "synapse",
+				"fileSystem": "synapsedata"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

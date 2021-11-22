@@ -1,0 +1,9 @@
+{
+	"name": "rgc-adf",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "05ed784e-8160-4ae4-aa2d-4b9b919cbc11",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+	}
+}

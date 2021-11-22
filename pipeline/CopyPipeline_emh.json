@@ -1,0 +1,227 @@
+{
+	"name": "CopyPipeline_emh",
+	"properties": {
+		"activities": [
+			{
+				"name": "ListFiles",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "SourceDataset_emh",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
+					}
+				}
+			},
+			{
+				"name": "For each file",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "ListFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('ListFiles').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 10,
+					"activities": [
+						{
+							"name": "Year",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Year",
+								"value": {
+									"value": "@substring(item().name, 1, 4)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Month",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Month",
+								"value": {
+									"value": "@substring(item().name, 5, 2)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Day",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Day",
+								"value": {
+									"value": "@substring(item().name, 7, 2)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Hour",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Hour",
+								"value": {
+									"value": "@substring(item().name, 10, 2)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Minutes",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Minutes",
+								"value": {
+									"value": "@substring(item().name, 12, 2)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "copy_files",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Year",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Month",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Day",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Hour",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Minutes",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": false,
+										"deleteFilesAfterCompletion": false
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset_emh",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DestinationDataset_emh",
+									"type": "DatasetReference",
+									"parameters": {
+										"cw_folderPath": {
+											"value": "@concat('/enriched/oss/',variables('Year'),'/',variables('Month'),'/',variables('Day'),'/',variables('Hour'),'/',variables('Minutes'))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Year": {
+				"type": "String"
+			},
+			"Month": {
+				"type": "String"
+			},
+			"Day": {
+				"type": "String"
+			},
+			"Minutes": {
+				"type": "String"
+			},
+			"Hour": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-12-17T20:36:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
